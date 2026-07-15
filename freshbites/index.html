@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreshBite — Food, Fast &amp; Fresh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<header class="topbar">
+  <div class="topbar__inner">
+    <a href="#/home" class="brand">
+      <span class="brand__mark">🍊</span>
+      <span class="brand__word">Fresh<em>Bite</em></span>
+    </a>
+
+    <nav class="nav" id="mainNav">
+      <a href="#/home" data-route="home">Home</a>
+      <a href="#/restaurants" data-route="restaurants">Restaurants</a>
+      <a href="#/about" data-route="about">About</a>
+      <a href="#/contact" data-route="contact">Contact</a>
+    </nav>
+
+    <div class="topbar__actions">
+      <button class="icon-btn" id="wishlistBtn" title="Wishlist" onclick="location.hash='#/account?tab=wishlist'">
+        ♥ <span class="badge" id="wishlistCount">0</span>
+      </button>
+      <button class="icon-btn" id="cartBtn" title="Cart" onclick="location.hash='#/cart'">
+        🧺 <span class="badge" id="cartCount">0</span>
+      </button>
+      <button class="icon-btn account-btn" id="accountBtn" onclick="location.hash='#/account'">👤</button>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ===================== HOME ===================== -->
+  <section class="page" id="page-home">
+    <section class="hero">
+      <div class="hero__ticket">
+        <div class="ticket">
+          <div class="ticket__hole"></div>
+          <p class="ticket__eyebrow">Today's Order Ticket</p>
+          <h1 class="ticket__title">Hungry?<br>We're already cooking.</h1>
+          <p class="ticket__sub">Real kitchens, real ingredients, delivered while it's still steaming.</p>
+          <form class="hero__search" onsubmit="event.preventDefault(); location.hash='#/restaurants?cuisine='+encodeURIComponent(this.q.value);">
+            <input type="text" name="q" placeholder="Craving tacos, ramen, dosa...">
+            <button type="submit">Find food</button>
+          </form>
+          <div class="ticket__stub">
+            <span>ORDER #FB-2214</span><span>SERVES · YOU</span><span>ETA · 28 MIN</span>
+          </div>
+        </div>
+        <div class="hero__stack" aria-hidden="true">
+          <span class="chip chip--1">🍕</span>
+          <span class="chip chip--2">🍜</span>
+          <span class="chip chip--3">🌮</span>
+          <span class="chip chip--4">🍣</span>
+          <span class="chip chip--5">🍔</span>
+          <span class="chip chip--6">🥗</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <p class="eyebrow">Browse by craving</p>
+        <h2>Categories</h2>
+      </div>
+      <div class="category-row" id="categoryRow"></div>
+    </section>
+
+    <section class="section section--tinted">
+      <div class="section__head">
+        <p class="eyebrow">Fresh off the pass</p>
+        <h2>Featured dishes</h2>
+      </div>
+      <div class="grid grid--dishes" id="featuredDishes"></div>
+    </section>
+
+    <section class="section">
+      <div class="offer-banner">
+        <div>
+          <p class="eyebrow eyebrow--light">Special offer</p>
+          <h2>20% off your first order</h2>
+          <p>Use code <strong>FRESH20</strong> at checkout. New customers only.</p>
+        </div>
+        <button class="btn btn--dark" onclick="location.hash='#/restaurants'">Order now</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <p class="eyebrow">Near you</p>
+        <h2>Popular restaurants</h2>
+      </div>
+      <div class="grid grid--restaurants" id="popularRestaurants"></div>
+    </section>
+  </section>
+
+  <!-- ===================== RESTAURANT LISTING ===================== -->
+  <section class="page" id="page-restaurants">
+    <div class="page-head">
+      <h1>Restaurants</h1>
+      <p>Every kitchen we deliver from, filtered your way.</p>
+    </div>
+    <div class="filters">
+      <div class="filter-group">
+        <label>Cuisine</label>
+        <select id="filterCuisine"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Min rating</label>
+        <select id="filterRating">
+          <option value="0">Any</option>
+          <option value="4">4.0+</option>
+          <option value="4.3">4.3+</option>
+          <option value="4.6">4.6+</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Price</label>
+        <select id="filterPrice">
+          <option value="">Any</option>
+          <option value="₹">₹ Budget</option>
+          <option value="₹₹">₹₹ Mid</option>
+          <option value="₹₹₹">₹₹₹ Premium</option>
+        </select>
+      </div>
+      <button class="btn btn--ghost" id="clearFilters">Clear</button>
+    </div>
+    <div class="grid grid--restaurants" id="restaurantResults"></div>
+  </section>
+
+  <!-- ===================== MENU ===================== -->
+  <section class="page" id="page-menu">
+    <div class="menu-header" id="menuHeader"></div>
+    <div class="menu-filters" id="menuFilters"></div>
+    <div class="grid grid--dishes" id="menuItemsGrid"></div>
+  </section>
+
+  <!-- ===================== PRODUCT DETAIL ===================== -->
+  <section class="page" id="page-product">
+    <div class="product-detail" id="productDetail"></div>
+    <div class="reviews" id="productReviews"></div>
+  </section>
+
+  <!-- ===================== CART ===================== -->
+  <section class="page" id="page-cart">
+    <div class="page-head">
+      <h1>Your cart</h1>
+      <p>A receipt for the meal you're about to have.</p>
+    </div>
+    <div class="cart-layout">
+      <div class="cart-list" id="cartList"></div>
+      <aside class="receipt" id="cartReceipt"></aside>
+    </div>
+  </section>
+
+  <!-- ===================== CHECKOUT ===================== -->
+  <section class="page" id="page-checkout">
+    <div class="page-head">
+      <h1>Checkout</h1>
+      <p>Almost there — where and when should it arrive?</p>
+    </div>
+    <div class="checkout-layout" id="checkoutLayout"></div>
+  </section>
+
+  <!-- ===================== ACCOUNT ===================== -->
+  <section class="page" id="page-account">
+    <div class="page-head">
+      <h1>Your account</h1>
+      <p id="accountGreeting">Profile, orders, addresses and saved dishes.</p>
+    </div>
+    <div class="account-layout">
+      <nav class="account-tabs" id="accountTabs">
+        <button data-tab="profile" class="active">Profile</button>
+        <button data-tab="orders">Order history</button>
+        <button data-tab="addresses">Saved addresses</button>
+        <button data-tab="wishlist">Wishlist</button>
+      </nav>
+      <div class="account-content" id="accountContent"></div>
+    </div>
+  </section>
+
+  <!-- ===================== LOGIN / REGISTER ===================== -->
+  <section class="page" id="page-login">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="active" data-auth="login">Log in</button>
+        <button data-auth="register">Register</button>
+      </div>
+      <form id="loginForm" class="auth-form">
+        <label>Email <input type="email" name="email" required placeholder="you@example.com"></label>
+        <label>Password <input type="password" name="password" required placeholder="••••••••"></label>
+        <button type="submit" class="btn btn--primary">Log in</button>
+        <p class="auth-note">Simulated authentication — no real account needed. Any email/password works.</p>
+      </form>
+      <form id="registerForm" class="auth-form hidden">
+        <label>Full name <input type="text" name="name" required placeholder="Jordan Lee"></label>
+        <label>Email <input type="email" name="email" required placeholder="you@example.com"></label>
+        <label>Password <input type="password" name="password" required placeholder="Create a password"></label>
+        <button type="submit" class="btn btn--primary">Create account</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT ===================== -->
+  <section class="page" id="page-about">
+    <div class="about-hero">
+      <p class="eyebrow eyebrow--light">Our story</p>
+      <h1>Started in one kitchen. Still tastes like it.</h1>
+      <p>FreshBite began in 2019 as a single delivery bike and a folder of family recipes. Today we plate for forty-plus neighborhood kitchens — but every order still gets packed like it's going to someone's actual table, because it is.</p>
+    </div>
+    <div class="section">
+      <div class="grid grid--stats">
+        <div class="stat"><strong>40+</strong><span>Partner kitchens</span></div>
+        <div class="stat"><strong>120k</strong><span>Meals delivered</span></div>
+        <div class="stat"><strong>28 min</strong><span>Average delivery</span></div>
+        <div class="stat"><strong>4.7★</strong><span>Average rating</span></div>
+      </div>
+    </div>
+    <div class="section section--tinted">
+      <div class="section__head"><p class="eyebrow">Behind the counter</p><h2>Team</h2></div>
+      <div class="grid grid--team" id="teamGrid"></div>
+    </div>
+    <div class="section">
+      <div class="section__head"><p class="eyebrow">On the shelf</p><h2>Awards</h2></div>
+      <ul class="awards" id="awardsList"></ul>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section class="page" id="page-contact">
+    <div class="page-head">
+      <h1>Contact us</h1>
+      <p>Questions, catering requests, or just tell us the meal made your day.</p>
+    </div>
+    <div class="contact-layout">
+      <div class="contact-info">
+        <div class="map-placeholder" aria-hidden="true">
+          <div class="map-pin">📍</div>
+          <div class="map-grid"></div>
+        </div>
+        <ul class="contact-list">
+          <li><strong>Address</strong><span>14 Cardamom Lane, Chennai, TN 600001</span></li>
+          <li><strong>Hours</strong><span>Mon–Sun, 10:00 AM – 11:30 PM</span></li>
+          <li><strong>Phone</strong><span>+91 98765 43210</span></li>
+          <li><strong>Email</strong><span>hello@freshbite.example</span></li>
+        </ul>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <label>Name <input type="text" name="name" required></label>
+        <label>Email <input type="email" name="email" required></label>
+        <label>Message <textarea name="message" rows="5" required></textarea></label>
+        <button type="submit" class="btn btn--primary">Send message</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <span class="brand__word footer__brand">Fresh<em>Bite</em></span>
+      <p>Warm food, honest kitchens, quick delivery.</p>
+    </div>
+    <div class="footer__cols">
+      <div>
+        <h4>Explore</h4>
+        <a href="#/restaurants">Restaurants</a>
+        <a href="#/about">About us</a>
+        <a href="#/contact">Contact</a>
+      </div>
+      <div>
+        <h4>Account</h4>
+        <a href="#/login">Log in</a>
+        <a href="#/account">My account</a>
+        <a href="#/cart">Cart</a>
+      </div>
+    </div>
+  </div>
+  <p class="footer__legal">A student demo project. Not a real ordering service.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
